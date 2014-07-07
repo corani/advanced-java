@@ -84,8 +84,8 @@
 							<li>Enumerations</li>
 							<li>Generics</li>
 							<li>Collections</li>
-							<li>Annotations</li>
 							<li>Reflection</li>
+							<li>Annotations</li>
 							<li>Concurrency</li>
 							<li>Miscellaneous</li>
 						</ol>
@@ -179,15 +179,73 @@ cat.getSound();
 				</section>
 
 				<section>
-					<section data-background="img/annotations.jpg">
-						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Annotations</h1>
+					<section data-background="img/reflection.jpg">
+						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Reflection</h1>
 					</section>
 				</section>
 
 				<section>
-					<section data-background="img/reflection.jpg">
-						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Reflection</h1>
+					<section data-background="img/annotations.jpg">
+						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Annotations</h1>
 					</section>
+
+					<section>
+						<h2>You've probably seen</h2>
+<pre class="java"><code data-trim>
+@Override
+public void someMethod() {}
+
+@SuppressWarnings
+public void badMethod() {}
+
+@Deprecated
+public void oldMethod() {}
+</code></pre>
+<p class="fragment">Annotations provide information to the compiler, some can be made available at runtime through reflection.</p>
+					</section>
+					
+					<section>
+						<h2>You can create them</h2>
+<pre class="java"><code data-trim>
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface Shared {
+   boolean restricted() default false;
+}
+</code></pre>
+<div class="fragment"><p>And use them like:</p>
+<pre class="java"><code data-trim>
+public class Users {
+   @Shared
+   public int getCount();
+	
+   @Shared(restricted=true)
+   public User getUserById(int id);
+   
+   public void hidden();
+}
+</code></pre>
+</div>
+					</section>
+
+					<section>
+						<h2>And use them</h2>
+<pre class="java"><code data-trim>
+// Iterate over all the methods in the class
+for (Method m : Users.class.getMethods()) {
+   Shared shared = m.getAnnotation(Shared.class);
+   // If the annotation is present
+   if (shared != null) {
+      if (shared.restricted()) {
+         // share privately
+      } else {
+         // share publicly
+      }
+   }
+}
+</code></pre>
+					</section>
+					
 				</section>
 
 				<section>
