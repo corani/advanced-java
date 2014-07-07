@@ -87,6 +87,7 @@
 							<li>Annotations</li>
 							<li>Reflection</li>
 							<li>Concurrency</li>
+							<li>Miscellaneous</li>
 						</ol>
 					</section>
 				</section>
@@ -94,6 +95,74 @@
 				<section>
 					<section data-background="img/enums.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -40px;">Enumerations</h1>
+					</section>
+					
+					<section>
+						<h2>Looks like C++ ...</h2>
+						<pre class="java"><code data-trim>
+enum Animal { CAT, DOG, MOUSE }
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Animal animal = Animal.CAT;
+switch(animal) {
+   case CAT:
+      // do cat things
+      break;
+   case DOG:
+      // do dog things
+      break
+   default:
+      // do default things
+}
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>... but very different</h2>
+					</section>
+					
+					<section>
+						<h2>Enums are classes</h2>
+<pre class="java"><code data-trim>
+public class Animal {
+   public static final Animal CAT   = new Animal();
+   public static final Animal DOG   = new Animal();
+   public static final Animal MOUSE = new Animal();
+}
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Cool stuff</h2>
+<pre class="java"><code data-trim>
+Animal.values() => Animal[];
+Animal.valueOf(String s) => Animal;
+
+Animal cat = Animal.CAT;
+cat.name() => "CAT"
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Cooler stuff</h2>
+<pre class="java"><code data-trim>
+enum Animal {
+   CAT("meow"), DOG("woof"), MOUSE("squeek");
+	
+   private String sound;
+	
+   Animal(String sound) {
+      this.sound = sound;
+   }
+	
+   String getSound() {
+      return sound;
+   }
+}
+
+Animal cat = Animal.CAT;
+cat.getSound();
+</code></pre>
 					</section>
 				</section>
 				
@@ -124,6 +193,19 @@
 				<section>
 					<section data-background="img/concurrency.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -40px;">Concurrency</h1>
+					</section>
+				</section>
+
+				<section>
+					<section data-background="img/misc.jpg">
+						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -80px;">Miscellaneous</h1>
+						<ul style="background: rgba(0, 0, 0, 0.5); color: white; padding-left: 10px">
+							<li>Variadic arguments</li>
+							<li>For-each syntax</li>
+							<li>Diamond operator</li>
+							<li>Lambda's</li>
+							<li>Optionals</li>
+						</ul>
 					</section>
 				</section>
 				
