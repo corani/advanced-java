@@ -325,6 +325,7 @@ public void addNumbers(List&lt;? super Integer&gt; list) {
 							<li>Map: HashMap, Properties, ...</li>
 						</ul>
 						</div>
+						<br/>
 						<p class="fragment">If you really need to implement one yourself, start from one of the abstractXxx collection types.</p>
 					</section>
 
@@ -424,6 +425,60 @@ Collections.sort(persons, Person.ORDER_FIRSTNAME);
 				<section>
 					<section data-background="img/reflection.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Reflection</h1>
+					</section>
+					
+					<section>
+						<h2>Meta-class</h2>
+<p>Every class has an associated meta-class that can be used to get all sorts of information about the class and to interact with the class.</p>
+<pre class="java"><code data-trim>
+Object.class;
+
+Object o = new Object();
+o.getClass();
+</code></pre>
+<p>Besides that, there's a <b>Class</b> utility class (note the capitalization):</p>
+<pre class="java"><code data-trim>
+Class c = Class.forName("...");
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Instanciating</h2>
+<pre class="java"><code data-trim>
+try {
+   Class c = Class.forName("com.example.Test");
+   Test t = (Test) c.newInstance();
+} catch (ClassNotFoundException e) {
+   // ...
+} catch (InstantiationException e) {
+   // ...
+} catch (IllegalAccessException e) {
+   // ...
+}
+</code></pre>
+<p>Many many possible exception!</p>
+					</section>
+
+					<section>
+						<h2>Inspecting a class</h2>
+<pre class="java"><code data-trim>
+// Get all the constructors:
+Constructor[] constructors = clazz.getDeclaredConstructors();
+// Get the constructor matching a specific signature:
+Constructor constructor = clazz.getDeclaredConstructor(String.class);
+// Instantiate an object:
+Example example = (Example) constructor.newInstance("String");
+</code></pre>
+<pre class="java fragment"><code data-trim>
+// Get all the methods (public and private):
+Method[] methods = clazz.getDeclaredMethods();
+// Get all visible methods (including from super-classes)
+Method[] methods = clazz.getMethods();
+// Get the method for a specific signature:
+Method method = clazz.getDeclaredMethod("setExample", String.class);
+// Invoke the method on an object:
+method.invoke(example, "New String");
+</code></pre>
 					</section>
 				</section>
 
