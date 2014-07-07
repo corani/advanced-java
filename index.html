@@ -176,6 +176,112 @@ cat.getSound();
 					<section data-background="img/collections.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Collections</h1>
 					</section>
+					
+					<section>
+						<h2>Collections</h2>
+						<p>Don't implement them yourself, almost any type already exist!</p>
+						<div style="text-align: left">
+						<ul>
+							<li>Set: HashSet, SortedSet, TreeSet, ...</li>
+							<li>List: ArrayList, LinkedList, Stack, ...</li>
+							<li>Queue: LinkedList, PriorityQueue, ...</li>
+							<li>Map: HashMap, Properties, ...</li>
+						</ul>
+						</div>
+						<p class="fragment">If you really need to implement one yourself, start from one of the abstractXxx collection types.</p>
+					</section>
+
+					<section>
+						<h2>Algorithms</h2>
+						<div style="text-align: left">
+						<ul>
+							<li>Sorting</li>
+							<li>Shuffling</li>
+							<li>Searching</li>
+						</ul>
+						</div>
+						<br/>
+						<div style="text-align: left" class="fragment">
+						<ul>
+							<li>Arrays.asList(array)</li>
+							<li>Collections.synchronizedList(list)</li>
+							<li>Collections.unmodifiableList(list)</li>
+							<li>Collections.singleton(value)</li>
+							<li>Collections.nCopies(num, value)</li>
+							<li>Collections.emptyList()</li>
+						</ul>
+						</div>
+					</section>
+					
+					<section>
+						<h2>Type-safe</h2>
+
+<pre class="java"><code data-trim>
+Map&lt;Integer, String&gt; map = new HashMap&lt;Integer, String&gt;();
+map.put(1, "One");
+map.put(2, "Two");
+//map.put("Three", 3);
+</code></pre>
+<pre class="java fragment"><code data-trim>
+for (String value : map.values()) {
+   // ...
+}
+for (Integer key : map.keySet()) {
+   // ...
+}
+for (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) {
+   entry.getKey();
+   entry.getValue();
+}
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Comparable</h2>
+
+<pre class="java"><code data-trim>
+class YourType {
+   @override
+   public boolean equals(Object other);
+	
+   @override
+   public int hashCode();
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+class YourType implements Comparable&lt;YourType&gt; {
+   @Override
+   public int compareTo(YourType other) {
+      // return -1, 0, +1
+   }
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Comparator</h2>
+<pre class="java"><code data-trim>
+public class Person {
+   public static final Comparator&lt;Person&gt; ORDER_FIRSTNAME
+      = new Comparator&lt;Person&gt;() {
+         @Override
+         public int compare(Person p1, Person p2) {
+            return p1.firstname.compareTo(p2.firstname);
+         }
+   };
+   public static final Comparator&lt;Person&gt; ORDER_AGE
+      = new Comparator&lt;Person&gt;() {
+         @Override
+         public int compare(Person p1, Person p2) {
+            return p1.age - p2.age;
+         }
+   };
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Collections.sort(persons, Person.ORDER_FIRSTNAME);
+</code></pre>
+					</section>
 				</section>
 
 				<section>
