@@ -170,6 +170,143 @@ cat.getSound();
 					<section data-background="img/generics.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white">Generics</h1>
 					</section>
+					
+					<section>
+						<h2>Similar to C++ templates</h2>
+					</section>
+
+					<section>
+						<h2>What's the problem?</h2>
+<pre class="java"><code data-trim>
+List strings = new ArrayList();
+strings.add("hello");
+strings.add("world");
+// no problem!
+strings.add(42);
+</code></pre>
+<div class="fragment">
+						<p>This works, until ...</p>
+<pre class="java"><code data-trim>
+for (Object o : strings) {
+   // ... RuntimeException here!
+   String s = (String) o;
+}
+</code></pre>
+</div>
+					</section>
+
+					<section>
+						<h2>What's the solution?</h2>
+<pre class="java"><code data-trim>
+List&lt;String&gt; strings = new ArrayList&lt;String&gt;();
+strings.add("hello");
+strings.add("world");
+// Compile-time exception!
+strings.add(42);
+</code></pre>
+<div class="fragment">
+						<p>And when you use it ...</p>
+<pre class="java"><code data-trim>
+for (String s : strings) {
+   // ... No need to cast!
+}
+</code></pre>
+</div>
+					</section>
+					
+					<section>
+						<h2>This is going to look ugly ...</h2>
+					</section>
+
+					<section>
+						<h2>Creating generic code</h2>
+<pre class="java"><code data-trim>
+public Pair&lt;K, V&gt; {
+   private K key;
+   private V value;
+	
+   public Pair(K key, V value) {
+      this.key = key;
+      this.value = value;
+   }
+}
+
+public class Util {
+   public static &lt;K, V&gt; boolean compare(Pair&lt;K, V&gt; p1, Pair&lt;K, V&gt; p2);
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>This is going to be confusing ...</h2>
+					</section>
+
+					<section>
+						<h2>Does this work?</h2>
+<pre class="java"><code data-trim>
+public void print(List&lt;Object&gt; list) {
+   for (Object elem : list)
+      System.out.println(elem);
+}
+
+List&lt;Integer&gt; ii = new ArrayList&lt;Integer&gt;();
+print(ii);
+</code></pre>
+						<p class="fragment">No! :-( Integer is not the same as Object, though it inherits from Object.</p>
+					</section>
+
+					<section>
+						<h2>This does work</h2>
+<pre class="java"><code data-trim>
+public void print(List&lt;?&gt; list) {
+   for (Object elem : list)
+      System.out.println(elem);
+}
+
+List&lt;Integer&gt; ii = new ArrayList&lt;Integer&gt;();
+print(ii);
+</code></pre>
+						<p class="fragment">But now we throw out type-safety!<br/><br/>If all objects that can be printed implement the "Printable" interface, we can do better.</p>
+					</section>
+
+					<section>
+						<h2>Generic inheritance</h2>
+<pre class="java"><code data-trim>
+public void print(List&lt;? extends Printable&gt; list) {
+   for (Object elem : list)
+      System.out.println(elem);
+}
+
+List&lt;Integer&gt; ii = new ArrayList&lt;Integer&gt;();
+print(ii);
+</code></pre>
+						<p class="fragment">Confusing: <b>extends</b> is used for both classes and interfaces.</p>
+					</section>
+
+					<section>
+						<h2>The other way around</h2>
+<p>Suppose your method accepts a List that you plan to add numbers to. How to make sure you can't use other lists?
+
+<pre class="java fragment"><code data-trim>
+public void addNumbers(List&lt;? super Integer&gt; list) {
+   for (int i = 0; i < 10; i++)
+      list.add(i);
+}
+</code></pre>
+						<p class="fragment">Now you can supply a List of Integers, Numbers or Objects, but <b>not</b> a List of Strings or Widgets.</p>
+					</section>
+					
+					<section>
+						<h2>A word of warning</h2>
+					</section>
+					
+					<section>
+						<h2>Erasure</h2>
+						<p>Because Generics were added to the language (in SE 1.5/5.0) and byte-code compatibility is an important feature of Java, all
+						Generics are <b>erased</b> during compilation, after type-checking.</p>
+						<br/>
+						<p>This is usually okay, but it limits the information you can get using reflection.</p>
+					</section>
 				</section>
 
 				<section>
