@@ -87,7 +87,7 @@
 							<li>Reflection</li>
 							<li>Annotations</li>
 							<li>Concurrency</li>
-							<li>Miscellaneous</li>
+							<li>Syntactic Sugar</li>
 						</ol>
 					</section>
 				</section>
@@ -554,14 +554,106 @@ for (Method m : Users.class.getMethods()) {
 
 				<section>
 					<section data-background="img/misc.jpg">
-						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -80px;">Miscellaneous</h1>
+						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -80px;">Syntactic Sugar</h1>
 						<ul style="background: rgba(0, 0, 0, 0.5); color: white; padding-left: 10px">
 							<li>Variadic arguments</li>
 							<li>For-each syntax</li>
 							<li>Diamond operator</li>
 							<li>Lambda's</li>
+							<li>Method references</li>
 							<li>Optionals</li>
 						</ul>
+					</section>
+					
+					<section>
+						<h2>Variadic arguments</h2>
+<pre class="java"><code data-trim>
+void example(String ... args);
+
+example("one");
+example("one", "two");
+</code></pre>
+<pre class="java fragment"><code data-trim>
+void example(String[] args);
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>For-each syntax</h2>
+<pre class="java"><code data-trim>
+for (int i = 0; i < list.size(); i++) {
+   String item = list.get(i);
+   // ...
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+List<String> list;
+for (String item : list) {
+    // ...
+}
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Diamond operator</h2>
+<pre class="java"><code data-trim>
+Map&lt;Integer, Pair&lt;String, List&lt;Double&gt;&gt;&gt; map
+   = new HashMap&lt;Integer, Pair&lt;String, List&lt;Double&gt;&gt;&gt;()
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Map&lt;Integer, Pair&lt;String, List&lt;Double&gt;&gt;&gt; map = new HashMap&lt;&gt;()
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Lambda's</h2>
+<pre class="java"><code data-trim>
+List&lt;Person&gt; persons;
+Collections.sort(persons, new Comparator&lt;Person&gt;() {
+   @Override
+   public int compare(Person p1, Person p2) {
+      return p1.age - p2.age;
+   }
+});
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Collections.sort(persons, (p1, p2) -> p1.age - p2.age);
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Method references</h2>
+<pre class="java"><code data-trim>
+public class Person {
+   public static int CompareByAge(Person p1, Person p2) {
+      return p1.age - p2.age;
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Collections.sort(persons, Person::CompareByAge);
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Optionals</h2>
+<pre class="java"><code data-trim>
+for (Person p : db.getPeople()) {
+   if (p.age > 20) {
+      Address a = p.getAddress();
+      if (a != null) {
+         System.out.println(a.getCity());
+      }
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+db.streamPeople()
+   .filter(p -> p > 20)
+   .flatMap(p -> p.getAddress())
+   .flatMap(Address::getCity)
+   .forEach(System.out::println);
+</code></pre>
 					</section>
 				</section>
 				
