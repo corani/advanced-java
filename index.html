@@ -379,10 +379,10 @@ for (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) {
 
 <pre class="java"><code data-trim>
 class YourType {
-   @override
+   @Override
    public boolean equals(Object other);
 	
-   @override
+   @Override
    public int hashCode();
 }
 </code></pre>
@@ -550,6 +550,270 @@ for (Method m : Users.class.getMethods()) {
 					<section data-background="img/concurrency.jpg">
 						<h1 style="background: rgba(0, 0, 0, 0.5); color: white; margin-left: -40px;">Concurrency</h1>
 					</section>
+					
+					<section>
+						<h2>Threads</h2>
+<pre class="java"><code data-trim>
+public class MyRunnable implements Runnable {
+   @Override
+   public void run() {
+      // ...
+   }
+}
+Runnable r = new MyRunnable();
+new Thread(r).start()
+</code></pre>
+<pre class="java fragment"><code data-trim>
+public class MyThread extends Thread {
+   @Override
+   public void run() {
+      // ...
+   }
+}
+new MyThread().start()
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Sleeping/Waiting</h2>
+<pre class="java"><code data-trim>
+try {
+   Thread.sleep(4000);
+} catch (InterruptedException e) {
+   // ...
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+while (true) {
+   doHeavyWork();
+   if (Thread.interrupted()) {
+      // ...
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+try {
+   AnotherThread.join()
+} catch (InterruptedException e) {
+   // ...
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Synchronization (1)</h2>
+							<p>The problem:</p>
+<pre class="java"><code data-trim>
+public class Counter {
+   private int c = 0;
+   public void inc() { c = c + 1; }
+   public void dec() { c = c - 1; }
+}
+</code></pre>
+<div class="fragment">
+							<p>One way to solve it:</p>
+<pre class="java"><code data-trim>
+public class Counter {
+   private int c = 0;
+   public synchronized void inc() { c = c + 1; }
+   public synchronized void dec() { c = c - 1; }
+}
+</code></pre>
+</div>
+					</section>
+
+					<section>
+						<h2>Atomic variables</h2>
+<pre class="java"><code data-trim>
+public class Counter {
+   private AtomicInteger c = new AtomicInteger();
+   
+   public void inc() { c.incrementAndGet(); }
+   public void dec() { c.decrementAndGet(); }
+}
+</code></pre>
+					</section>
+					
+					<section>
+						<h2>Synchronization (2)</h2>
+<pre class="java"><code data-trim>
+public void inc() {
+   synchronized(this) {
+      c = c + 1;
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+private Object lock = new Object();
+
+public void inc() {
+   synchronized(lock) {
+      c = c + 1;
+   }
+}   
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Deadlock</h2>
+<pre class="java"><code data-trim>
+public class Friend {
+   public synchronized void greet(Friend f) {
+      System.out.println("Hi!");
+      f.greetBack(this);
+   }
+   
+   public synchronized void greetBack(Friend f) {
+      System.out.println("Hi too!");
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Friend f1 = new Friend();
+Friend f2 = new Friend();
+
+new Thread() {
+   public void run() { f1.greet(f2); }
+}.start();
+new Thread() {
+   public void run() { f2.greet(f1); }
+}.start();
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Starvation</h2>
+<pre class="java"><code data-trim>
+public class Example {
+   private boolean busy = false;
+   public synchronized boolean isBusy() {
+      return busy;
+   }
+   public synchronized void doHeavyWork() {
+      busy = true; heavyWork(); busy = false;
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Example e = new Example();
+new Thread() {
+   public void run() {
+      while(true) { e.doHeavyWork(); }
+   }
+}.start();
+
+while(true) {
+   Thread.sleep(1000);
+   System.out.println("busy? " + e.isBusy());
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Livelock</h2>
+<pre class="java"><code data-trim>
+public class Person {
+   private boolean left;
+   
+   public void pass(Person p) {
+      while (true) {
+         if (p.canPass(left)) return;
+            else left = !left;
+         Thread.yield();
+      }
+   }
+   public boolean canPass(boolean other) {
+      if (left == other) {
+         left = !left;
+         return false;
+      } else return true;
+   }
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Wait/Notify</h2>
+<pre class="java"><code data-trim>
+public class Drop {
+   private boolean empty = true;
+   private String message;
+   
+   public synchronized String take() {
+      while (empty) wait();
+      empty = true;
+      notifyAll();
+      return message;
+   }
+   public synchronized void put(String message) {
+      while (!empty) wait();
+      empty = false;
+      this.message = message;
+      notifyAll();
+   }
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Executors</h2>
+<pre class="java"><code data-trim>
+ExecutorService pool = Executors.newFixedThreadPool(10);
+
+while (!pool.isShutdown()) {
+    pool.execute(new Handler(serverSocket.accept()));
+}
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Fork/Join</h2>
+<pre class="java"><code data-trim>
+public class MyAction extends RecursiveAction {
+   protected void compute() {
+      int size = list.size();
+      if (size < 100) {
+         computeDirectly();
+      } else {
+         invokeAll(new MyAction(list.subList(0, size / 2)),
+                   new MyAction(list.subList(size / 2 + 1, size)));
+   }
+   protected void computeDirectly() {
+      // ...
+   }
+}
+
+ForkJoinPool pool = new ForkJoinPool();
+pool.invoke(new MyAction(bigList));
+</code></pre>
+					</section>
+
+					<section>
+						<h2>Futures</h2>
+<pre class="java"><code data-trim>
+ExecutorService pool = Executors.newFixedThreadPool(10);
+
+public Future&lt;Document&gt; download(String url) {
+   return pool.submit(new Callable&lt;Document&gt;() {
+      @Override
+      public Document call() {
+         return doDownload(url);
+      }
+   }
+}
+</code></pre>
+<pre class="java fragment"><code data-trim>
+Future&lt;Document&gt; future = download("http://example.com/robots.txt");
+
+future.isDone();
+future.cancel(mayInterrupt);
+future.isCancelled();
+Document future.get(timeout);
+Document future.get();
+</code></pre>
+					</section>
+
+					
 				</section>
 
 				<section>
